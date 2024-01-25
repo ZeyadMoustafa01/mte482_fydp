@@ -44,4 +44,4 @@ depth_map = cv2.normalize(depth_map, None, 0, 1, norm_type=cv2.NORM_MINMAX, dtyp
 depth_map = (depth_map*255).astype(np.uint8)
 depth_map = cv2.applyColorMap(depth_map , cv2.COLORMAP_MAGMA)
 
-cv2.imwrite(filename=f"results/depth_map_{model_type}.png", img=depth_map)
+cv2.imwrite(filename=f"results/depth_map_{model_type}_from_rpi.png", img=depth_map)
