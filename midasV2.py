@@ -13,8 +13,8 @@ model_type = "MiDaS_small"  # MiDaS v2.1 - Small   (lowest accuracy, highest inf
 midas = torch.hub.load("intel-isl/MiDaS", model_type)
 
 # Move model to GPU if available
-# device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-device = torch.device("cpu")
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+# device = torch.device("cpu")
 midas.to(device)
 midas.eval()
 
@@ -30,6 +30,10 @@ else:
 # Open up the video capture from a webcam
 cap = cv2.VideoCapture(0)
 
+if cap.isOpened():
+    _, temp_img = cap.read()
+    print(temp_img.shape)
+
 while cap.isOpened():
 
     success, img = cap.read()
@@ -37,6 +41,7 @@ while cap.isOpened():
     start = time.time()
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = cv2.resize(img, (0, 0), fx = 0.1, fy = 0.1)
 
     # Apply input transforms
     input_batch = transform(img).to(device)
@@ -66,10 +71,11 @@ while cap.isOpened():
 
     depth_map = (depth_map*255).astype(np.uint8)
     depth_map = cv2.applyColorMap(depth_map , cv2.COLORMAP_MAGMA)
-
-    cv2.putText(img, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
-    cv2.imshow('Image', img)
-    cv2.imshow('Depth Map', depth_map)
+    
+    print(round(fps, 3))
+    # cv2.putText(img, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
+    # cv2.imshow('Image', img)
+    # cv2.imshow('Depth Map', depth_map)
 
     if cv2.waitKey(5) & 0xFF == ord('q'):
         break
