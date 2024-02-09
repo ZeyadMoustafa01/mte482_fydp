@@ -12,6 +12,9 @@ async def main():
                 print(device)
                 device_c = device.address
                 break
+    if not device_c:
+        print("device not found")
+        return
     
     async with BleakClient(device_c) as client:
         for serv in client.services:
