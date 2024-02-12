@@ -7,7 +7,7 @@ import time
 depthEstimator = midasDepthEstimator()
 
 # Initialize webcam
-camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+camera = cv2.VideoCapture(0)
 cv2.namedWindow("Depth Image", cv2.WINDOW_NORMAL)
 
 while True:
@@ -26,13 +26,12 @@ while True:
     end = time.time()
     totalTime = end - start
     fps = 1 / totalTime
-
-    cv2.putText(
-        img_out, f"FPS: {int(fps)}", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2
-    )
+    # print(round(fps, 3))
+    cv2.putText(img_out, f"FPS: {int(fps)}", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
     cv2.imshow("Depth Image", img_out)
 
     # cv2.imshow("Color Image", img)
+    # print(round(fps, 3))
 
     # Press key q to stop
     if cv2.waitKey(1) == ord("q"):
