@@ -1,8 +1,8 @@
 #include <ArduinoBLE.h>
 
-#define MOTOR_1 (5u)
-#define MOTOR_2 (6u)
-#define MOTOR_3 (9u)
+#define MOTOR_1 (2u)
+#define MOTOR_2 (3u)
+#define MOTOR_3 (6u)
 
 BLEService hFeedbackService("605C8890-D7F7-45D0-A3BA-953F59645E2D");
 BLEByteCharacteristic dirCharacteristic("4A88F279-F65C-4ECC-8C95-04AC25142A83", BLERead | BLEWrite);
@@ -44,17 +44,17 @@ void loop() {
 
 void run_motor(uint8_t input_data) {
   // Turn on motor based on motor bit position in input_data
-  if (input_data & 0b0001 == 0)
+  if ((input_data & 0b0001) == 0)
     analogWrite(MOTOR_1, 0);
   else
     analogWrite(MOTOR_1, 255);
 
-  if (input_data & 0b0010 == 0)
+  if ((input_data & 0b0010) == 0)
     analogWrite(MOTOR_2, 0);
   else
     analogWrite(MOTOR_2, 255);
 
-  if (input_data & 0b0100 == 0)
+  if ((input_data & 0b0100) == 0)
     analogWrite(MOTOR_3, 0); 
   else
     analogWrite(MOTOR_3, 255);
