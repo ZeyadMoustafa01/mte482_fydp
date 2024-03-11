@@ -23,15 +23,15 @@ class midasDepthEstimator:
         self.initializeModel()
 
     def initializeModel(self):
-        modelPath = "models/midasModel_edgetpu.tflite"
+        modelPath = "models/midasModel.tflite"
 
         # Download model fif not available already
         if not os.path.isfile(modelPath):
             url = "https://tfhub.dev/intel/lite-model/midas/v2_1_small/1/lite/1?lite-format=tflite"
             urllib.request.urlretrieve(url, modelPath)
         
-        delegates = load_delegate(library='libedgetpu.so.1.0')
-        self.interpreter = Interpreter(model_path=modelPath, experimental_delegates=[delegates])
+        # delegates = load_delegate(library='libedgetpu.so.1.0')
+        self.interpreter = Interpreter(model_path=modelPath)#, experimental_delegates=[delegates])
         self.interpreter.allocate_tensors()
 
         # Get model info
