@@ -34,6 +34,9 @@ class BleComm:
         
     async def connect(self) -> bool:
         try:
+            if not self.device_found():
+                await self.get_device()
+                
             self.__client = BleakClient(address_or_ble_device=self.__device,
                                       disconnected_callback=self.__client_disconnected)
             await self.__client.connect()
@@ -59,10 +62,16 @@ class BleComm:
                 print("Unable to connect to device")
                 return
 
-        curr_val = await self.__client.read_gatt_char(CHAR_UUID)
-        print(f"The current CHAR value is {curr_val}")
+        # curr_val = await self.__client.read_gatt_char(CHAR_UUID)
+        # print(f"The current CHAR value is {curr_val}")
         
         await self.__client.write_gatt_char(char_specifier=CHAR_UUID, data=val)
         
-        new_val = await self.__client.read_gatt_char(CHAR_UUID)
-        print(f"The new char value is: {new_val}")
+        # new_val = await self.__client.read_gatt_char(CHAR_UUID)
+        # print(f"The new char value is: {new_val}")
+    
+    async def write_ble(self, to_write: int):
+        if not self.device_found():
+            await self.get_device()
+        
+        await self.write(to_write.to_bytes())

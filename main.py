@@ -10,7 +10,7 @@ async def main(loop, ble_comm: BleComm, to_write: int) -> None:
         
         await ble_comm.write(to_write.to_bytes())
         
-        to_write = (to_write + 1) % 8
+        to_write = (to_write + 1) % 2
         await asyncio.sleep(5.0)
         
         i += 1
