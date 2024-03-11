@@ -2,6 +2,7 @@ import asyncio
 from bleak import BleakScanner, BleakClient
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
+import time
 
 SERVICE_UUID = '605c8890-d7f7-45d0-a3ba-953f59645e2d'
 CHAR_UUID = '4a88f279-f65c-4ecc-8c95-04ac25142a83'
@@ -64,14 +65,18 @@ class BleComm:
 
         # curr_val = await self.__client.read_gatt_char(CHAR_UUID)
         # print(f"The current CHAR value is {curr_val}")
-        
+        print("To write: ", val)
         await self.__client.write_gatt_char(char_specifier=CHAR_UUID, data=val)
         
         # new_val = await self.__client.read_gatt_char(CHAR_UUID)
         # print(f"The new char value is: {new_val}")
     
-    async def write_ble(self, to_write: int):
-        if not self.device_found():
-            await self.get_device()
-        
-        await self.write(to_write.to_bytes())
+    async def write_ble(self, queue: asyncio.Queue):
+        while True:
+            to_write: int = await queue.get()
+            print(to_write)
+            if not self.device_found():
+                await self.get_device()
+            
+            await self.write(to_write.to_bytes())
+            print(f"End: {time.strftime('%X')}")
