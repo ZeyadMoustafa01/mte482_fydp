@@ -11,7 +11,7 @@ async def depth(queue: asyncio.Queue):
 
     # Initialize webcam
     camera = cv2.VideoCapture(0)
-    cv2.namedWindow("Depth Image", cv2.WINDOW_NORMAL)
+    # cv2.namedWindow("Depth Image", cv2.WINDOW_NORMAL)
     prev = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
     prev_time = time.time()
     while True:
@@ -22,6 +22,7 @@ async def depth(queue: asyncio.Queue):
             prev_time = time.time()
             
             start = time.time()
+            img = cv2.flip(img, -1)
 
             # Estimate depth
             colorDepth = depthEstimator.estimateDepth(img)
@@ -39,33 +40,33 @@ async def depth(queue: asyncio.Queue):
             fps = 1 / totalTime
             # print(round(fps, 3))
             
-            right_side_speed = np.sum(np.mean(speed[:, 480:, :], axis=(0, 1)))
-            right_center_speed = np.sum(np.mean(speed[:, 320:481, :], axis=(0, 1)))
-            left_center_speed = np.sum(np.mean(speed[:, 160:321, :], axis=(0, 1)))
-            left_side_speed = np.sum(np.mean(speed[:, :160, :], axis=(0, 1)))
+            right_side_speed = np.mean(speed[:, 480:, :])
+            right_center_speed = np.mean(speed[:, 320:481, :])
+            left_center_speed = np.mean(speed[:, 160:321, :])
+            left_side_speed = np.mean(speed[:, :160, :])
 
-            cv2.putText(img_out, f"FPS: {round(fps, 3)}", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
-            cv2.imshow("Depth Image", img_out)
+            # cv2.putText(img_out, f"FPS: {round(fps, 3)}", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+            # cv2.imshow("Depth Image", img_out)
             
             
             left = left_center_speed + left_side_speed
             right = right_center_speed + right_side_speed
             to_write = 0
-            if left > 85 or right > 85:
+            if left > 50 or right > 50:
                 if right > left:
                     if right_side_speed > right_center_speed:
                         print("right")
                         to_write = 1
                     else:
                         print("right center")
-                        to_write = 3
+                        to_write = 2
                 else:
                     if left_side_speed > left_center_speed:
                         print("left")
                         to_write = 4
                     else:
                         print("left center")
-                        to_write = 6
+                        to_write = 2
             if to_write:
                 if queue.qsize() > 0:
                     queue._queue.clear()

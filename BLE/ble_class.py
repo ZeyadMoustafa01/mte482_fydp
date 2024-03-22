@@ -78,5 +78,5 @@ class BleComm:
             if not self.device_found():
                 await self.get_device()
             
-            await self.write(to_write.to_bytes())
+            await self.write(to_write.to_bytes(length=1, byteorder="big"))
             # print(f"End: {time.strftime('%X')}")
